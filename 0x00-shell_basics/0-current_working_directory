@@ -1,0 +1,7 @@
+#!/bin/bash
+
+# check for current working directory
+current_working_directory=$(pwd)
+
+# print working directory
+echo "$current_working_directory"
