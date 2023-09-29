@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+# This script stops the 4-to_infinity_and_beyond process
+
+# Send a terminate signal to the process
+pkill -f "7-highlander"
+
+echo "Attempted to terminate 7-highlander."

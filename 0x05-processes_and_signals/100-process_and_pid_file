@@ -1,0 +1,32 @@
+#!/usr/bin/env bash
+# Trap handler for SIGTERM
+handle_sigterm() {
+    echo "I hate the kill command"
+    cleanup_and_exit
+}
+
+# Trap handler for SIGINT
+handle_sigint() {
+    echo "Y U no love me?!"
+    exit 1
+}
+
+# Cleanup and exit function for SIGQUIT and SIGTERM
+cleanup_and_exit() {
+    rm -f /var/run/myscript.pid
+    exit 0
+}
+
+# Set trap handlers
+trap handle_sigterm SIGTERM
+trap handle_sigint SIGINT
+trap cleanup_and_exit SIGQUIT
+
+# Create PID file
+echo "$$" > /var/run/myscript.pid
+
+# Display message indefinitely
+while true; do
+    echo "To infinity and beyond"
+    sleep 1
+done
