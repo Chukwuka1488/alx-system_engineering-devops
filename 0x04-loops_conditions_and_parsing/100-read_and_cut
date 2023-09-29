@@ -2,7 +2,7 @@
 # This script processes /etc/passwd using pipe and cut
 # to extract specific fields
 
-cat /etc/passwd | while IFS=: read -r line
+while IFS=: read -r line
 do
     username=$(echo "$line" | cut -d: -f1)
     uid=$(echo "$line" | cut -d: -f3)
