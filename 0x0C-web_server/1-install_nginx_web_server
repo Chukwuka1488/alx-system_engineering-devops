@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+# Install nginx
+sudo apt-get -y update
+sudo apt-get -y install nginx
+sudo ufw 'Nginx HTTP'
+
+# Create a custom homepage
+echo "Hello World!" | sudo tee /var/www/html/index.html
+
+# testing nginx config
+sudo nginx -t
+
+# Make sure nginx is started
+sudo service nginx reload
