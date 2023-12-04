@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+# Install nginx
+sudo apt-get -y update
+sudo apt-get -y install nginx
+
+# Create index page
+echo "Hello World!" | sudo tee /var/www/html/index.html
+
+# Perfoming redirection
+string_for_replacement="server_name _;\n\trewrite ^\/redirect_me https:\/\/www.youtube.com\/watch?v=QH2-TGUlwu4 permanent;"
+
+# Update my nginx config with the string replacement below
+sudo sed -i "s/server_name _;/$string_for_replacement/" /etc/nginx/sites-enabled/default
+
+# Create a custom 404 page
+echo "Ceci n'est pas une page" | sudo tee /var/www/html/404.html
+
+# Custom HTTP response header
+sudo sed -i "server_name _;/a add_header X-Served-By $HOSTNAME;" /etc/ngix/sites-enabled/default
+
+# test for syntax errors
+sudo nginx -t
+
+# Restart Nginx
+sudo service nginx restart
