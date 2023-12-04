@@ -1,13 +1,8 @@
-# Install Nginx web server with Puppet
 include stdlib
 
 exec { 'update packages':
-  command => '/usr/bin/apt-get update'
-}
-
-exec { 'restart nginx':
-  command => '/usr/sbin/service nginx restart',
-  require => Package['nginx'],
+  command => '/usr/bin/apt-get update',
+  unless  => '/usr/bin/test -f /var/lib/apt/periodic/update-success-stamp && /usr/bin/test "$(date +%s)" -le "$(( $(date --date="$(cat /var/lib/apt/periodic/update-success-stamp)" +%s) + 86400 ))"',
 }
 
 package { 'nginx':
@@ -37,7 +32,7 @@ file_line { 'nginx_redirect':
 }
 
 file { '/var/www/html/404.html':
-  ensure  => file,
+  ensure  => 'file',
   content => "Ceci n'est pas une page",
   require => Package['nginx'],
 }
@@ -54,14 +49,7 @@ exec { 'nginx_test':
   require => Exec['add_custom_header'],
 }
 
-exec { 'nginx_reload':
-  command => 'nginx -s reload',
-  path    => ['/bin', '/usr/bin', '/usr/sbin'],
-  require => Exec['nginx_test'],
-}
-
 service { 'nginx':
   ensure  => running,
   enable  => true,
-  require => Exec['nginx_test'],
 }
