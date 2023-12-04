@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
 # Using pkill with a -9 option to send a KILL signal to the process
-pkill -9 -f "7-highlander"
+pkill -f 7-highlander
 
 echo "Attempted to kill 7-highlander."
