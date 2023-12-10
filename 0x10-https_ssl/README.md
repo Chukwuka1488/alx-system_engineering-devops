@@ -41,3 +41,29 @@ The configuration snippet you've provided is for HAProxy, a high-performance TCP
 - `server 151666-web-02 54.160.77.90:80 check`: Another server definition in the backend.
 
 This configuration sets up HAProxy to handle both HTTP and HTTPS traffic, redirecting HTTP to HTTPS, and load balancing between two backend servers. It also includes SSL termination for secure connections.
+
+Lines 10 to 17 in your HAProxy configuration file are specifying default settings for SSL/TLS encryption. These lines are crucial for setting up a secure environment for your HTTPS connections. Here's a breakdown of what each line means and where you can get the required information:
+
+1. **`ca-base /etc/ssl/certs`**:
+   - This line specifies the default folder where HAProxy looks for CA (Certificate Authority) certificates.
+   - The `/etc/ssl/certs` directory is standard in many Linux distributions and typically contains trusted CA certificates.
+
+2. **`crt-base /etc/ssl/private`**:
+   - This sets the default directory where HAProxy looks for SSL/TLS certificates.
+   - You should place your SSL/TLS certificates in the `/etc/ssl/private` directory, or change this path to the directory where you store your certificates.
+
+3. **SSL Cipher and Cipher Suites**:
+   - The next lines set the default ciphers and cipher suites for SSL/TLS connections. These determine the algorithms that will be used for encryption, decryption, and key exchange.
+   - `ssl-default-bind-ciphers` and `ssl-default-bind-ciphersuites` are configured with a list of secure cipher suites. 
+   - These specific values are generally recommended for a balance of security and compatibility, as suggested by the Mozilla SSL Configuration Generator.
+
+4. **`ssl-default-bind-options ssl-min-ver TLSv1.2 no-tls-tickets`**:
+   - This line sets the minimum version of SSL/TLS protocol that HAProxy will accept (TLS version 1.2 in this case) and disables TLS tickets.
+   - TLS 1.2 is recommended as a minimum because older versions (like SSLv3, TLS 1.0, and TLS 1.1) are considered less secure.
+
+### How to Obtain SSL/TLS Certificates:
+
+- If you don't have an SSL/TLS certificate for your domain (`gm-nig-ltd.tech`), you can obtain one from a Certificate Authority (CA). Let's Encrypt is a popular choice as it provides free certificates.
+- Once you have your certificate, you should place the full chain and private key in a single file (e.g., `gm-nig-ltd.tech.pem`) and store it in the directory specified in your `crt-base` setting (or update the `bind` line in the `https-frontend` section to point to the correct location of your certificate file).
+
+Remember, these settings are crucial for setting up secure HTTPS connections. Make sure the paths specified are correct and the certificate files are properly installed and have the correct permissions.
