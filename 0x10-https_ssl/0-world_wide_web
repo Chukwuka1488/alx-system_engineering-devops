@@ -1,20 +1,16 @@
 #!/usr/bin/env bash
-# This script queries DNS records for given domains and subdomains and prints the results.
+# print domains and subdomains
 
-# Function to print domain or subdomain DNS record information
-query_dns_record() {
-    # Perform a DNS lookup and format the output
-    dig +noall +answer "$1" | awk -v subdomain="$2" '/^.*\sA\s/ { print "The subdomain " subdomain " is an A record and points to " $5 }'
+print_domain_subdomain () {
+    dig "$1" | grep -A1 'ANSWER SECTION:' | sed -r "s/$1./$2/g" | awk -F" " ' NR==2 { print "The subdomain " $1 " is a " $4 " record and points to " $5 }'
 }
 
-# Check if two arguments are provided
-if [ "$#" -eq 2 ]; then
-    # Query for a specific subdomain
-    query_dns_record "$2.$1" "$2"
+if [ "$#" -eq 2 ]
+then
+    print_domain_subdomain "$2.$1" "$2"
 else
-    # Query for default subdomains
-    query_dns_record "www.$1" "www"
-    query_dns_record "lb-01.$1" "lb-01"
-    query_dns_record "web-01.$1" "web-01"
-    query_dns_record "web-02.$1" "web-02"
+    print_domain_subdomain "www.$1" "www"
+    print_domain_subdomain "lb-01.$1" "lb-01"
+    print_domain_subdomain "web-01.$1" "web-01"
+    print_domain_subdomain "web-02.$1" "web-02"
 fi
