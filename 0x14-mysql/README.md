@@ -138,3 +138,56 @@ If you encounter the "signature couldn't be verified" error like this one: NO_PU
 sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 467B942D3A79B
 ----END OPENSSH PRIVATE KEY-----
 https://www.devart.com/dbforge/mysql/how-to-install-mysql-on-ubuntu/
+
+
+mysql -u root -p
+CREATE USER 'holberton_user'@'localhost' IDENTIFIED BY 'projectcorrection280hbtn';
+
+2. To create a database named tyrell_corp, you can use the following command 
+CREATE DATABASE tyrell_corp;
+USE tyrell_corp;
+CREATE TABLE nexus6 (
+  id INT PRIMARY KEY,
+  name VARCHAR(255)
+);
+INSERT INTO nexus6 (id, name) VALUES (1, 'Leon');
+GRANT SELECT ON tyrell_corp.nexus6 TO 'holberton_user'@'localhost';
+FLUSH PRIVILEGES;
+
+3. To create a new user named replica_user with the host name set to %, you can use the following command
+CREATE USER 'replica_user'@'%' IDENTIFIED BY 'your_password';
+GRANT REPLICATION SLAVE ON *.* TO 'replica_user'@'%';
+GRANT SELECT ON mysql.user TO 'holberton_user'@'localhost';
+FLUSH PRIVILEGES;
+
+4. Database Replication
+
+1. sudo vi /etc/mysql/mysql.conf.d/mysqld.cnf
+2. locate the line that specifies the bind address parameter and comment it out and also add this line just below the log-error line
+3. log_bin = /var/log/mysql/mysql-bin.log 
+4. server-id=1
+5. sudo service mysql restart
+6. sudo service mysql status
+7. Log into SQL prommpt as root and retrieve the binary log file name and position on the primary server web-01
+8. sudo mysql -u root -p
+9. SHOW MASTER STATUS;
+10. Note down the values of the file and position column, you will need these values for the replica configuration
+
+11. Go to the replica server web-02
+11. locate the line that specifies the bind address parameter and comment it out and also add this line just below the log-error line
+12. sudo vi /etc/mysql/mysql.conf.d/mysqld.cnf
+13. server-id=2
+14. relay-log = /var/log/mysql/mysql-relay-bin.log 
+15. log_bin = /var/log/mysql/mysql-bin.log
+16. binlog_do_db = tyrell_corp (replica db name)
+17. sudo service mysql restart
+18. sudo service mysql status
+19. Log into SQL prommpt as root and retrieve the binary log file name and position on the primary server web-01
+20. sudo mysql -u root -p
+21. Configure the replica db with the information copied from the web-01 primary server
+22. CHANGE MASTER TO MASTER_HOST='134.207.58.187', MASTER_USER='replica_user', MASTER_PASSWORD='projectcorrection280hbtn', MASTER_LOG_FILE='mysql-bin.0000001', MASTER_LOG_POS=154;
+23. START SLAVE;
+24. SHOW SLAVE STATUS\G;
+25. Check that SLAVE_SQL_RUNNING is set to yes for verification.
+26. Allow port 3306 on Ufw for both servers
+27. sudo ufw allow 3306
