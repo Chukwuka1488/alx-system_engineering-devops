@@ -10,12 +10,14 @@ import sys
 
 
 def export_employee_todo_to_csv(employee_id):
+    session = requests.Session()
+
     base_url = "https://jsonplaceholder.typicode.com/users/{}"
     user_url = base_url.format(employee_id)
     todos_url = "{}/todos".format(user_url)
 
-    user_response = requests.get(user_url)
-    todos_response = requests.get(todos_url)
+    user_response = session.get(user_url)
+    todos_response = session.get(todos_url)
 
     if user_response.status_code != 200 or todos_response.status_code != 200:
         print("Error: Unable to fetch data for employee ID {}"
@@ -25,10 +27,10 @@ def export_employee_todo_to_csv(employee_id):
     user_data = user_response.json()
     todos_data = todos_response.json()
 
-    employee_name = user_data['name']
+    employee_name = user_data['username']
 
     with open('{}.csv'.format(employee_id), 'w', newline='') as csvfile:
-        taskwriter = csv.writer(csvfile, quoting=csv.QUOTE_ALL)
+        taskwriter = csv.writer(csvfile, delimiter=',', quoting=csv.QUOTE_ALL)
         for todo in todos_data:
             taskwriter.writerow([employee_id, employee_name,
                                  todo['completed'], todo['title']])
