@@ -7,14 +7,15 @@ information about his/her TODO list progress.
 import requests
 import sys
 
-
 def get_employee_todo_progress(employee_id):
+    session = requests.Session()
+
     base_url = "https://jsonplaceholder.typicode.com/users/{}"
     user_url = base_url.format(employee_id)
     todos_url = "{}/todos".format(user_url)
 
-    user_response = requests.get(user_url)
-    todos_response = requests.get(todos_url)
+    user_response = session.get(user_url)
+    todos_response = session.get(todos_url)
 
     if user_response.status_code != 200 or todos_response.status_code != 200:
         print("Error: Unable to fetch data for employee ID {}"
@@ -33,7 +34,6 @@ def get_employee_todo_progress(employee_id):
     for todo in todos_data:
         if todo['completed']:
             print("\t {}".format(todo['title']))
-
 
 if __name__ == "__main__":
     if len(sys.argv) != 2:
